@@ -11,21 +11,27 @@ import wixData from 'wix-data';
 import wixLocation from 'wix-location';
 
 $w.onReady(function () {
-		
+
 	let path = wixLocation.path;
-	let query = wixLocation.query;	
-	
+	let query = wixLocation.query;
+
 	let collectionName = 'Default';
 	if ("collection" in query) {
 		collectionName = query['collection'];
 	}
-	
+
 	if ("data" in query) {
 		let obj = JSON.parse(atob(query['data']));
-		console.log('Sending 123FormBuilder submitted data to WixCode');		
-		wixData.insert(collectionName, obj);	
+		let objNew = {};
+		
+		for (let prop in obj) {
+			let newProp = prop.replace('.', '');
+			objNew[newProp] = obj[prop];
+        }
+
+		console.log('Sending 123FormBuilder submitted data to WixCode');
+		let dataSent = wixData.insert(collectionName, objNew);
+	} else {
+		console.log('No submission data received from 123FormBuilder');
 	}
-	else {
-		console.log('No submission data received from 123FormBuilder');		
-	}		
 });
